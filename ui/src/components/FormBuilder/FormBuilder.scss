@@ -1,0 +1,45 @@
+.formbuilder {
+	display: flex;
+	flex-direction: column;
+	height: 300px;
+	max-width: 1000px;	
+	width: 100%;
+	border: 1px solid black;
+	padding: 10px;
+
+	&__title {
+		display: flex;
+		flex-direction: column;
+		border: 2px solid #d9edf7;
+		border-radius: 10px 10px 0 0;
+
+
+		&-header {
+			background-color: #d9edf7;
+			// color: #2a7298;
+			// font-weight: 700;
+			padding: 10px;
+		}
+
+		&-input {
+			padding: 10px;
+
+			input {
+				font-size: 25px;
+			    border: 0;
+			    width: 100%;
+			    outline: none;
+			    border-bottom: 1px solid #ccc;
+			    padding-bottom: 7px;
+			}
+
+			input:focus {
+				border-bottom: 1px solid black;
+			}
+		}
+	}
+
+	&__description-input input {
+		font-size: 15px;
+	}
+}
