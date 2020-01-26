@@ -3,10 +3,15 @@ import React, { Component } from 'react';
 import Select from 'react-select';
 import _ from 'lodash';
 import classNames from 'classnames';
+import { Toggle } from "react-toggle-component";
+import styled from "styled-components";
 
-/* Import styles and resources*/
+/* Import styles and resources */
 import './Question.scss';
 import Trash from './img/bin.png';
+
+/* Import my components */
+import Button from 'components/Button';
 
 // Types of forms available for the form builder.
 const typeOptions = [
@@ -22,7 +27,7 @@ const orderOptions = [
 // Max number of options allowed.
 const MAX_OPTIONS_ALLOWED = 50;
 
-class Question extends Component {
+export default class Question extends Component {
 
   constructor(props) {
     super(props);
@@ -45,15 +50,23 @@ class Question extends Component {
     // Handles when Enter is pressed while in an options input
     this.handleEnterKeyPress = this.handleEnterKeyPress.bind(this);
 
+    // Resets the form
+    this.resetForm = this.resetForm.bind(this);
+
+    // Starts the process of saving form
+    this.trySavingForm = this.trySavingForm.bind(this);
+
     this.state = {
       label: '',
       type: { value: "Multi-select", label: "Multi-select" }, // Default type of form
+      required: true,
       order:  { value: 'A-z', label: '(A-z) - Alphabetical' }, // Default ordering
       options: [{
         value: '',
         dulplicate: false
       }],
       maxOptions: false,
+      savingForm: false,
     }
   }
 
@@ -113,6 +126,24 @@ class Question extends Component {
     });
   }
 
+  resetForm() {
+    this.setState({
+      label: '',
+      type: { value: "Multi-select", label: "Multi-select" },
+      required: true,
+      order:  { value: 'A-z', label: '(A-z) - Alphabetical' },
+      options: [{
+        value: '',
+        dulplicate: false
+      }],
+      maxOptions: false,
+    });
+  }
+
+  trySavingForm() {
+
+  }
+
   renderOptions() {
     const { options } = this.state;
 
@@ -166,7 +197,7 @@ class Question extends Component {
   }
 
   render() {
-    const { label, type, maxOptions } = this.state;
+    const { label, type, maxOptions, required, savingForm } = this.state;
     const maxOptionsClassname = classNames('question__error-max-capacity', { 'question__error-max-capacity-show': maxOptions });
 
     return (
@@ -194,6 +225,21 @@ class Question extends Component {
             <div className={maxOptionsClassname}>{`You have reached your max limit of ${MAX_OPTIONS_ALLOWED} options.`}</div>
           </div>
 
+          <div className='question__body-submit'>
+            <div className='question__body-submit-required'>
+               <div className='question__body-submit-required-text'>Required</div>
+              <Toggle
+                name="requiredToggle"
+                onToggle={evt => this.setState({ required: evt.target.checked })}
+                checked={required}
+              />
+            </div>
+            <div className='question__body-submit-buttons'>
+              <Button text='Cancel' cb={this.resetForm}/>
+              <Button text='Save changes' cb={this.trySavingForm} color='green' loading={savingForm}/>
+            </div>
+          </div>
+
         </div>
 
       </div>
@@ -201,5 +247,3 @@ class Question extends Component {
     );
   }
 }
-
-export default Question;

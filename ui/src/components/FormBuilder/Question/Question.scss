@@ -104,6 +104,30 @@
 			}
 		}
 
+		&-submit {
+			display: flex;
+			flex-direction: column;
+			border-top: 3px solid #ececec;
+			padding-top: 20px;
+
+			&-required {
+				display: flex;
+				justify-content: flex-end;
+				margin-bottom: 15px;
+				&-text {
+					margin-right: 10px;
+					font-weight: 300;
+				}
+			}
+			&-buttons {
+				display: flex;
+				justify-content: flex-end;
+				.button {
+					margin-left: 15px;
+				}
+			}
+		}
+
 		::placeholder {
 			opacity: 0.6;
 			font-weight: 300;
