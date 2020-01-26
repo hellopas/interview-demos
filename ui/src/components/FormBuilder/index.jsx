@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import './FormBuilder.scss';
 
 /* Import my components */
-// import MultipleChoice from 'components/MultipleChoice';
+import Question from 'components/FormBuilder/Question';
 
 class FormBuilder extends Component {
 
@@ -15,6 +15,9 @@ class FormBuilder extends Component {
     this.state = {
         title: 'Untitled form',
         description: '',
+        questions: [
+        
+        ]
     }
   }
 
@@ -34,6 +37,10 @@ class FormBuilder extends Component {
             <div className='formbuilder__title-input formbuilder__description-input'>
                 <input type='text' placeholder='Form description' value={description} onChange={ (evt) => {this.setState({ description: evt.target.value })} }/>
             </div>
+        </div>
+
+        <div className='formbuilder__questions'>
+            <Question />
         </div>
 
 
