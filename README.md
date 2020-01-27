@@ -2,6 +2,8 @@
 
 To run the app, do the following:
 
+### `cd ui`
+
 ### `yarn install`
 
 ### `yarn start`
