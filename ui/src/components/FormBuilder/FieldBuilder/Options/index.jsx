@@ -13,7 +13,6 @@ const orderOptions = [
   { value: 'z-A', label: '(z-A) Alphabetical' },
 ];
 
-
 export default class Options extends Component {
 
   fields = {}; 

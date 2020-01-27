@@ -20,9 +20,9 @@ export default class FormBuilder extends Component {
 
     return (
       <div className='formbuilder'>
-      <Helmet>
-      <title>{title} - Quick Base</title>
-      </Helmet>
+        <Helmet>
+          <title>{title} - Quick Base</title>
+        </Helmet>
         
         <div className='formbuilder__title'> 
           <div className='formbuilder__title-header'></div>
