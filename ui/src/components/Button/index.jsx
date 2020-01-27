@@ -9,10 +9,6 @@ import Loading from './img/waiting.png';
 
 export default class Button extends Component {
 
-    constructor(props) {
-        super(props);
-    }
-
     render() {
       const { loading, cb, text, color } = this.props;
       const buttonClasses = classNames({ 'button__green': color === 'green' },
@@ -24,7 +20,7 @@ export default class Button extends Component {
         <div>
           { loading && 
             <div className={buttonClasses}>
-              <img src={Loading} className='button__loading-img' />
+              <img alt='loading' src={Loading} className='button__loading-img' />
             </div>
           }
           { !loading &&

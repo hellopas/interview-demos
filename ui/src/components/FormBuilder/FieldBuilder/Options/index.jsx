@@ -2,7 +2,6 @@
 import React, { Component } from 'react';
 import Select from 'react-select';
 import _ from 'lodash';
-import classNames from 'classnames';
 
 /* Import styles and resources */
 import './Options.scss';

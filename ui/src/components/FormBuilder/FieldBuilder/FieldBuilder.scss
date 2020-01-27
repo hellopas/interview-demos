@@ -16,7 +16,7 @@
 	}
 
 	&__body {
-		padding: 15px;
+		padding: 15px 15px 10px 15px;
 		display: flex;
 		flex-direction: column;
 		border: 2px solid #d9edf7;
@@ -24,6 +24,9 @@
 		&-header {
 			display: flex;
 			padding-top: 5px;
+			@media (max-width: 510px) {
+				flex-direction: column;
+			}
 			&-input {
 				font-size: 20px;
 			    border: 0;
@@ -32,7 +35,16 @@
 			    padding-bottom: 7px;
 			    width: 400px;
 			    margin-right: 20px;
-			padding-left: 10px;
+				padding-left: 10px;
+				@media (max-width: 650px) {
+					width: 200px;
+				}
+				@media (max-width: 510px) {
+					width: 100%;
+					padding-left: 0;
+					margin-right: 0;
+					margin-bottom: 10px;
+				}
 
 			}
 			&-select {
@@ -69,15 +81,40 @@
 				display: flex;
 				justify-content: flex-end;
 				align-items: center;
+				flex-wrap: wrap;
+
+				@media (max-width: 595px) {
+					flex-direction: column;
+					align-items: initial;
+				}
+
 				.button {
 					margin-left: 15px;
+					margin-bottom: 10px;
+					@media (max-width: 595px) {
+						margin-left: 0;
+						width: 100%;
+						padding: 12px 0px;
+
+					}
 				}
 				.button__loading {
 					margin-left: 15px;
+					margin-bottom: 10px;
+					@media (max-width: 595px) {
+						margin-left: 0;
+						width: 100%;
+						padding: 12px 0px;
+					}
 				}
 			}
 			&-success {
 				color: green;
+				margin-bottom: 10px;
+				@media (max-width: 595px) {
+					margin-bottom: 17px;
+					text-align: center;
+				}
 			}
 		}
 
@@ -91,16 +128,34 @@
 		&-max-capacity {
 			color: #e29b17;
 			opacity: 0;
-			transition: opacity ease-in-out 1s;
+			transition: opacity ease-in-out 1s, padding ease-in-out 200ms;
 			padding-top: 20px;
 		    padding-bottom: 10px;
+			@media (max-width: 595px) {
+				font-size: 13px;
+				padding-top: 10px;
+				text-align: center;
+			}
+
 			&-show {
 				opacity: 1;
+				@media (max-width: 595px) {
+					font-size: 13px;
+					padding-top: 20px;
+					text-align: center;
+					padding-bottom: 20px;
+				}
 			}
+
 		}
 		&-submit {
 			font-size: 15px;
 			color: #e46363;
+			margin-bottom: 10px;
+			@media (max-width: 595px) {
+				margin-bottom: 17px;
+				text-align: center;
+			}
 		}
 	}
 }

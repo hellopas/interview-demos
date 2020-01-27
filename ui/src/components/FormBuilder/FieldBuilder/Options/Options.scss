@@ -51,6 +51,11 @@
 			display: flex;
 			justify-content: flex-end;
 			align-items: center;
+			@media (max-width: 595px) {
+				flex-direction: column;
+				justify-content: flex-start;
+				align-items: flex-start;
+			}
 
 			&-default {
 				font-size: 15px;
@@ -60,14 +65,26 @@
 			    padding-bottom: 7px;
 			    flex: 1;
 			    margin-right: 20px;
+			    @media (max-width: 595px) {
+					width: 100%;
+					margin-right: 0;
+					margin-bottom: 25px;
+				}
 			}
 
 			&-text {
 				margin-right: 15px;
 				font-weight: 300;
+				@media (max-width: 595px) {
+					margin-bottom: 10px;
+					margin-right: 0;
+				}
 			}
 			&-dropdown {
 				width: 200px;
+				@media (max-width: 595px) {
+					width: 100%;
+				}
 			}
 		}
 	}

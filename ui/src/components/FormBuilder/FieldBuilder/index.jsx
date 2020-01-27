@@ -4,7 +4,6 @@ import Select from 'react-select';
 import _ from 'lodash';
 import classNames from 'classnames';
 import { Toggle } from "react-toggle-component";
-import styled from "styled-components";
 
 /* Import styles and resources */
 import './FieldBuilder.scss';
