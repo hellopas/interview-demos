@@ -2,7 +2,7 @@
 
 To run the app, do the following:
 
-### Navigate to ui directory.
+### `cd ui`
 
 ### `yarn install`
 
