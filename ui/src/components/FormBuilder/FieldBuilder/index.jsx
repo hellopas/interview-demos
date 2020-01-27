@@ -23,73 +23,30 @@ const MAX_OPTIONS_ALLOWED = 50;
 
 export default class FieldBuilder extends Component {
 
-  constructor(props) {
-    super(props);
-
-    // Keeps track of all the focus refs.
-    this.fields = {}; 
-
-    // Handles type change
-    this.handleTypeChange = this.handleTypeChange.bind(this);
-
-    // Handles order change
-    this.handleOrderChange = this.handleOrderChange.bind(this);
-
-    // Renders the options for type: multi-select 
-    // this.renderOptions = this.renderOptions.bind(this);
-
-    // Adds a new option row
-    this.createNewOption = this.createNewOption.bind(this);
-
-    // Removes an existing option
-    this.deleteOption = this.deleteOption.bind(this);
-
-    // Updates a row option
-    this.updateOption = this.updateOption.bind(this);
-
-    // Handles when Enter is pressed while in an options input
-    this.handleEnterKeyPress = this.handleEnterKeyPress.bind(this);
-
-    // Sets default value
-    this.handleDefaultValue = this.handleDefaultValue.bind(this);
-
-    // Resets the form
-    this.resetForm = this.resetForm.bind(this);
-
-    // Starts the process of saving form
-    this.getFormReadyToSave = this.getFormReadyToSave.bind(this);
-
-    // Remove all blank option rows
-    this.eliminateBlankOptions = this.eliminateBlankOptions.bind(this);
-
-    // Save form if valid, otherwise show error
-    this.validateAndTrySavingForm = this.validateAndTrySavingForm.bind(this);
-
-    this.state = {
-      label: '',
-      type: { value: "Multi-select", label: "Multi-select" }, // Default type of form
-      required: true,
-      defaultValue: '',
-      order:  { value: 'A-z', label: '(A-z) - Alphabetical' }, // Default ordering
-      options: [{
-        value: ''
-      }],
-      maxOptions: false,
-      savingForm: false,
-      submitSuccess: null,
-      submitError: null,
-    }
+  state = {
+    label: '',
+    type: { value: "Multi-select", label: "Multi-select" }, // Default type of form
+    required: true,
+    defaultValue: '',
+    order:  { value: 'A-z', label: '(A-z) - Alphabetical' }, // Default ordering
+    options: [{
+      value: ''
+    }],
+    maxOptions: false,
+    savingForm: false,
+    submitSuccess: null,
+    submitError: null
   }
 
-  handleTypeChange(selectedOption) {
+  handleTypeChange = (selectedOption) => {
     this.setState({ type: selectedOption });
   }
 
-  handleOrderChange(selectedOption) {
+  handleOrderChange = (selectedOption) => {
     this.setState({ order: selectedOption });
   }
 
-  createNewOption(idx) {
+  createNewOption = (idx) => {
     const { options } = this.state;
 
     // Check to see if the user is focused on the last options field.
@@ -107,7 +64,7 @@ export default class FieldBuilder extends Component {
     }
   }
 
-  deleteOption(idx) {
+  deleteOption = (idx) => {
     this.setState((state) => {
       // Creates new options array without the option being deleted.
       const options = state.options.filter((item, j) => idx !== j);
@@ -119,7 +76,7 @@ export default class FieldBuilder extends Component {
     });
   }
 
-  updateOption(value, idx) {
+  updateOption = (value, idx) => {
     this.setState((state) => {
       // Creates new options array with all the old options and the option being updated.
       const options = state.options.map((item, j) => {
@@ -137,13 +94,13 @@ export default class FieldBuilder extends Component {
     });
   }
 
-  handleDefaultValue(defaultValue) {
+  handleDefaultValue = (defaultValue) => {
     this.setState({
       defaultValue
     });
   }
 
-  resetForm() {
+  resetForm = () => {
     this.setState({
       label: '',
       type: { value: "Multi-select", label: "Multi-select" },
@@ -160,7 +117,7 @@ export default class FieldBuilder extends Component {
     });
   }
 
-  getFormReadyToSave() {
+  getFormReadyToSave = () => {
     // Returns all the non blank options
     let newOptions = this.eliminateBlankOptions();
 
@@ -172,7 +129,7 @@ export default class FieldBuilder extends Component {
   }
 
   // Gets rid of all the blank options (unless there's just one option).
-  eliminateBlankOptions() {
+  eliminateBlankOptions = () => {
     const { options } = this.state;
     let newOptions = []; // copy all non blank values to this array
 
@@ -191,7 +148,7 @@ export default class FieldBuilder extends Component {
     return newOptions;
   }
 
-  validateAndTrySavingForm() {
+  validateAndTrySavingForm = () => {
     const { options, label, defaultValue, maxOptions } = this.state;
     let optionsClone = _.cloneDeep(options); // Need to manipulate options without changing state
 
@@ -237,7 +194,7 @@ export default class FieldBuilder extends Component {
     }
   }
 
-  async postForm(options) {
+  postForm = async (options) => {
     const { label, type, required, defaultValue, order} = this.state;
     let body = {
       label,
@@ -262,7 +219,7 @@ export default class FieldBuilder extends Component {
     });
   }
 
-  handleSuccessResponse(res) {
+  handleSuccessResponse = (res) => {
     this.setState({
       savingForm: false,
       submitSuccess: res, 
@@ -270,22 +227,13 @@ export default class FieldBuilder extends Component {
     });
   }
 
-  handleErrorResponse(res) {
+  handleErrorResponse = (res) => {
     console.log(res)
     this.setState({
       savingForm: false,
       submitSuccess: null, 
       submitError: 'Server error. Could not save.'
     });
-  }
-
-  handleEnterKeyPress(evt, idx) {
-    // Focus on the next input if available when Enter is pressed
-    if (evt.key === 'Enter') {
-        if (this.state.options.length > (idx + 1)) {
-            this.fields[idx + 1].focus();
-        }
-    }
   }
 
   render() {

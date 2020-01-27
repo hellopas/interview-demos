@@ -16,16 +16,9 @@ const orderOptions = [
 
 export default class Options extends Component {
 
-  constructor(props) {
-    super(props);
+  fields = {}; 
 
-    // Keeps track of all the focus refs.
-    this.fields = {}; 
-
-    this.handleEnterKeyPress = this.handleEnterKeyPress.bind(this);
-  }
-
-  handleEnterKeyPress(evt, idx) {
+  handleEnterKeyPress = (evt, idx) => {
     // Focus on the next input if available when Enter is pressed
     if (evt.key === 'Enter') {
         if (this.props.options.length > (idx + 1)) {

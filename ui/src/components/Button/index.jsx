@@ -9,28 +9,28 @@ import Loading from './img/waiting.png';
 
 export default class Button extends Component {
 
-    render() {
-      const { loading, cb, text, color } = this.props;
-      const buttonClasses = classNames({ 'button__green': color === 'green' },
-                                       { 'button__white': color === 'white' },
-                                       { 'button': !loading }, 
-                                       { 'button__loading': loading });
+  render() {
+    const { loading, cb, text, color } = this.props;
+    const buttonClasses = classNames({ 'button__green': color === 'green' },
+                                     { 'button__white': color === 'white' },
+                                     { 'button': !loading }, 
+                                     { 'button__loading': loading });
 
-      return (
-        <div>
-          { loading && 
-            <div className={buttonClasses}>
-              <img alt='loading' src={Loading} className='button__loading-img' />
-            </div>
-          }
-          { !loading &&
-            <div className={buttonClasses} onClick={cb}>
-              <div className='button__text'>{text}</div>
-            </div>
-          }
-        </div>
-      )
-    }
+    return (
+      <div>
+        { loading && 
+          <div className={buttonClasses}>
+            <img alt='loading' src={Loading} className='button__loading-img' />
+          </div>
+        }
+        { !loading &&
+          <div className={buttonClasses} onClick={cb}>
+            <div className='button__text'>{text}</div>
+          </div>
+        }
+      </div>
+    )
+  }
 
 }
 

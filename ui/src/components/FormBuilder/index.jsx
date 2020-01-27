@@ -9,15 +9,11 @@ import './FormBuilder.scss';
 import FieldBuilder from 'components/FormBuilder/FieldBuilder';
 
 export default class FormBuilder extends Component {
-
-  constructor(props) {
-    super(props);
-
-    this.state = {
-        title: 'Untitled form',
-        description: ''
-    };
-  }
+  
+  state = {
+    title: 'Untitled form',
+    description: ''
+  };
 
   render() {
     const { title, description } = this.state;
