@@ -7,13 +7,14 @@
 	&__title {
 		display: flex;
 		flex-direction: column;
-		border: 2px solid #d9edf7;
+		border: 2px solid #eaeaea;
 		border-radius: 10px 10px 0 0;
 
 
 		&-header {
-			background-color: #d9edf7;
-			padding: 10px;
+			background-color: #eaeaea;
+    		padding: 10px;
+    		border-radius: 8px 8px 0 0;
 		}
 
 		&-input {

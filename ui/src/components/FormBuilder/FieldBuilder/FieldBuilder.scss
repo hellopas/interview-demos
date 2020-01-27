@@ -20,6 +20,7 @@
 		display: flex;
 		flex-direction: column;
 		border: 2px solid #d9edf7;
+	    box-shadow: 0 0 1px rgba(0,0,0,0), 0px 8px 22px rgba(0,0,0,.1);
 
 		&-header {
 			display: flex;
