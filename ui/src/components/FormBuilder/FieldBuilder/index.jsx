@@ -7,7 +7,7 @@ import { Toggle } from "react-toggle-component";
 import styled from "styled-components";
 
 /* Import styles and resources */
-import './Question.scss';
+import './FieldBuilder.scss';
 import Trash from './img/bin.png';
 
 /* Import my components */
@@ -28,7 +28,7 @@ const orderOptions = [
 // Max number of options allowed.
 const MAX_OPTIONS_ALLOWED = 50;
 
-export default class Question extends Component {
+export default class FieldBuilder extends Component {
 
   constructor(props) {
     super(props);
@@ -51,6 +51,9 @@ export default class Question extends Component {
     // Handles when Enter is pressed while in an options input
     this.handleEnterKeyPress = this.handleEnterKeyPress.bind(this);
 
+    // Sets default value
+    this.handleDefaultValue = this.handleDefaultValue.bind(this);
+    
     // Resets the form
     this.resetForm = this.resetForm.bind(this);
 
@@ -129,6 +132,12 @@ export default class Question extends Component {
     });
   }
 
+  handleDefaultValue(defaultValue) {
+    this.setState({
+      defaultValue
+    });
+  }
+
   resetForm() {
     this.setState({
       label: '',
@@ -140,6 +149,7 @@ export default class Question extends Component {
         value: ''
       }],
       maxOptions: false,
+      savingForm: false,
       submitSuccess: null,
       submitError: null,
     });
@@ -172,12 +182,15 @@ export default class Question extends Component {
         error = 'Form contains duplicates entries.';
     } else if ( label === '') {
         error = 'Label is empty.'
-    } else if ( optionsClone[optionsClone.length - 1].value === '' ) {
+    }
+
+    if ( optionsClone[optionsClone.length - 1].value === '' ) {
         // Since the form creates a new row when you focus on the "last" row, 
         // this makes sure to ignore that row if it's empty before sending the data to the server.
-        console.log('popping')
         optionsClone.pop();
-    } else if ( defaultValue !== '' && !(defaultValue in hashTable) ) {
+    }
+
+    if ( defaultValue !== '' && !(defaultValue in hashTable) ) {
 
         if ( maxOptions ) {
             error = 'Default value could not be added to the list. Delete an entry.'
@@ -243,7 +256,7 @@ export default class Question extends Component {
   }
 
   renderOptions() {
-    const { options, defaultValue } = this.state;
+    const { options, defaultValue, order } = this.state;
 
     // Boolean used to show the delete icon. 
     let showDelete = false; 
@@ -256,29 +269,29 @@ export default class Question extends Component {
     return (
       <div>
         { _.map(options, (option, idx) => (
-          <div className='question__body-options-parent' key={`option-${idx}`}>
-            <div className='question__body-options-row'>
-              <div className='question__body-options-row-checkbox'></div>
+          <div className='fieldbuilder__body-options-parent' key={`option-${idx}`}>
+            <div className='fieldbuilder__body-options-row'>
+              <div className='fieldbuilder__body-options-row-checkbox'></div>
               
-              <input className='question__body-options-row-input' placeholder='Add option' onChange={ (evt) => { this.updateOption(evt.target.value, idx) } }
+              <input className='fieldbuilder__body-options-row-input' placeholder='Add option' onChange={ (evt) => { this.updateOption(evt.target.value, idx) } }
                 value={options[idx].value} onFocus={ () => this.createNewOption(idx)} ref={ (ref) => this.fields[idx] = ref } onKeyPress={ (evt) => this.handleEnterKeyPress(evt, idx) }/>
               
-              {showDelete && <img alt='delete' src={Trash} className='question__body-options-row-delete' onClick={ () => this.deleteOption(idx) }/>}
+              {showDelete && <img alt='delete' src={Trash} className='fieldbuilder__body-options-row-delete' onClick={ () => this.deleteOption(idx) }/>}
             </div>
-            { options[idx].duplicate && <div className='question__error-duplicate'>
+            { options[idx].duplicate && <div className='fieldbuilder__error-duplicate'>
               Duplicate entry.
             </div>}
           </div>
           )
         ) }
-        <div className='question__body-options-footer'>
-          <input type='text' placeholder='Default value' className='question__body-options-footer-default'
+        <div className='fieldbuilder__body-options-footer'>
+          <input type='text' placeholder='Default value' className='fieldbuilder__body-options-footer-default'
             value={defaultValue} onChange={ (evt) => this.setState({ defaultValue: evt.target.value }) }/>
-          <div className='question__body-options-footer-text'>Display Order</div>
+          <div className='fieldbuilder__body-options-footer-text'>Display Order</div>
             <Select
-                className='question__body-options-footer-dropdown'
-                classNamePrefix='question__body-options-footer-dropdown'
-                value={this.state.order}
+                className='fieldbuilder__body-options-footer-dropdown'
+                classNamePrefix='fieldbuilder__body-options-footer-dropdown'
+                value={order}
                 onChange={this.handleOrderChange}
                 options={orderOptions}
               />
@@ -299,46 +312,46 @@ export default class Question extends Component {
   render() {
     const { label, type, maxOptions, required, savingForm, 
               submitSuccess, submitError } = this.state;
-    const maxOptionsClassname = classNames('question__error-max-capacity', { 'question__error-max-capacity-show': maxOptions });
+    const maxOptionsClassname = classNames('fieldbuilder__error-max-capacity', { 'fieldbuilder__error-max-capacity-show': maxOptions });
 
     return (
-      <div className='question'>
-        <div className='question__title'> 
-            <div className='question__title-header'>Field Builder</div>
+      <div className='fieldbuilder'>
+        <div className='fieldbuilder__title'> 
+            <div className='fieldbuilder__title-header'>Field Builder</div>
         </div>
 
-        <div className='question__body'>
-          <div className='question__body-header'> 
-              <input type='text' placeholder='Label' className='question__body-header-input'
+        <div className='fieldbuilder__body'>
+          <div className='fieldbuilder__body-header'> 
+              <input type='text' placeholder='Label' className='fieldbuilder__body-header-input'
                 value={label} onChange={ (evt) => this.setState({ label: evt.target.value }) }/>
 
               <Select
-                className='question__body-header-select'
-                classNamePrefix='question__body-header-select'
+                className='fieldbuilder__body-header-select'
+                classNamePrefix='fieldbuilder__body-header-select'
                 value={type}
                 onChange={this.handleTypeChange}
                 options={typeOptions}
               />
           </div>
 
-          <div className='question__body-options'>
+          <div className='fieldbuilder__body-options'>
             {this.renderOptions()}  
             <div className={maxOptionsClassname}>{`You have reached your max limit of ${MAX_OPTIONS_ALLOWED} options.`}</div>
           </div>
 
-          <div className='question__body-submit'>
-            <div className='question__body-submit-required'>
-               <div className='question__body-submit-required-text'>Required</div>
+          <div className='fieldbuilder__body-submit'>
+            <div className='fieldbuilder__body-submit-required'>
+               <div className='fieldbuilder__body-submit-required-text'>Required</div>
               <Toggle
                 name="requiredToggle"
                 onToggle={evt => this.setState({ required: evt.target.checked })}
                 checked={required}
               />
             </div>
-            <div className='question__body-submit-buttons'>
+            <div className='fieldbuilder__body-submit-buttons'>
 
-              {submitSuccess && <div className='question__body-submit-success'>Successfully saved!</div>}
-              {submitError && <div className='question__error-submit'>{submitError}</div>}
+              {submitSuccess && <div className='fieldbuilder__body-submit-success'>Successfully saved!</div>}
+              {submitError && <div className='fieldbuilder__error-submit'>{submitError}</div>}
 
               <Button text='Cancel' cb={this.resetForm}/>
               <Button text='Save changes' cb={this.trySavingForm} color='green' loading={savingForm}/>

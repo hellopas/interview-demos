@@ -5,20 +5,17 @@ import React, { Component } from 'react';
 import './FormBuilder.scss';
 
 /* Import my components */
-import Question from 'components/FormBuilder/Question';
+import FieldBuilder from 'components/FormBuilder/FieldBuilder';
 
-class FormBuilder extends Component {
+export default class FormBuilder extends Component {
 
   constructor(props) {
     super(props);
 
     this.state = {
         title: 'Untitled form',
-        description: '',
-        questions: [
-        
-        ]
-    }
+        description: ''
+    };
   }
 
   render() {
@@ -28,19 +25,19 @@ class FormBuilder extends Component {
       <div className='formbuilder'>
         
         <div className='formbuilder__title'> 
-            <div className='formbuilder__title-header'></div>
-            
-            <div className='formbuilder__title-input'>
-                <input type='text' placeholder='Form title' value={title} onChange={ (evt) => {this.setState({ title: evt.target.value })} }/>
-            </div>
+          <div className='formbuilder__title-header'></div>
+          
+          <div className='formbuilder__title-input'>
+            <input type='text' placeholder='Form title' value={title} onChange={ (evt) => {this.setState({ title: evt.target.value })} }/>
+          </div>
 
-            <div className='formbuilder__title-input formbuilder__description-input'>
-                <input type='text' placeholder='Form description' value={description} onChange={ (evt) => {this.setState({ description: evt.target.value })} }/>
-            </div>
+          <div className='formbuilder__title-input formbuilder__description-input'>
+            <input type='text' placeholder='Form description' value={description} onChange={ (evt) => {this.setState({ description: evt.target.value })} }/>
+          </div>
         </div>
 
         <div className='formbuilder__questions'>
-            <Question />
+            <FieldBuilder />
         </div>
 
 
@@ -49,5 +46,3 @@ class FormBuilder extends Component {
     );
   }
 }
-
-export default FormBuilder;
