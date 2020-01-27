@@ -2,6 +2,8 @@
 
 To run the app, do the following:
 
+### Navigate to ui directory.
+
 ### `yarn install`
 
 ### `yarn start`
