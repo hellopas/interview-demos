@@ -12,6 +12,7 @@ import Trash from './img/bin.png';
 
 /* Import my components */
 import Button from 'components/Button';
+import API from 'services/API';
 
 // Types of forms available for the form builder.
 const typeOptions = [
@@ -60,13 +61,15 @@ export default class Question extends Component {
       label: '',
       type: { value: "Multi-select", label: "Multi-select" }, // Default type of form
       required: true,
+      defaultValue: '',
       order:  { value: 'A-z', label: '(A-z) - Alphabetical' }, // Default ordering
       options: [{
-        value: '',
-        dulplicate: false
+        value: ''
       }],
       maxOptions: false,
       savingForm: false,
+      submitSuccess: null,
+      submitError: null,
     }
   }
 
@@ -86,7 +89,7 @@ export default class Question extends Component {
         // Add an option field if MAX_OPTIONS_ALLOWED hasn't exceeded.
         if ( options.length < MAX_OPTIONS_ALLOWED ) {
             this.setState({
-              options: [...options, { value: '', dulplicate: false }], 
+              options: [...options, { value: '' }], 
               maxOptions: false
             });
         } else {
@@ -114,7 +117,7 @@ export default class Question extends Component {
       const options = state.options.map((item, j) => {
         // Option being updated
         if ( j === idx ) {
-            return { value: value, dulplicate: false}
+            return { value: value }
         } else { // All other options
             return item;
         }
@@ -131,21 +134,116 @@ export default class Question extends Component {
       label: '',
       type: { value: "Multi-select", label: "Multi-select" },
       required: true,
+      defaultValue: '',
       order:  { value: 'A-z', label: '(A-z) - Alphabetical' },
       options: [{
-        value: '',
-        dulplicate: false
+        value: ''
       }],
       maxOptions: false,
+      submitSuccess: null,
+      submitError: null,
     });
   }
 
   trySavingForm() {
+    const { options, label, defaultValue, maxOptions } = this.state;
+    let optionsClone = _.cloneDeep(options);
+
+    let hashTable = {};
+    let duplicates = false;
+    let error = null;
+    let success = null;
+
+
+    for (let i = 0; i < optionsClone.length; i++) {
+      let option = optionsClone[i];
+      if ( option.value in hashTable ) {
+          duplicates = true;
+          option.duplicate = true;
+      } else {
+          hashTable[option.value] = true;
+      }
+    }
+
+    if ( duplicates ) {
+        this.setState({
+          options: optionsClone
+        });
+        error = 'Form contains duplicates entries.';
+    } else if ( label === '') {
+        error = 'Label is empty.'
+    } else if ( optionsClone[optionsClone.length - 1].value === '' ) {
+        // Since the form creates a new row when you focus on the "last" row, 
+        // this makes sure to ignore that row if it's empty before sending the data to the server.
+        console.log('popping')
+        optionsClone.pop();
+    } else if ( defaultValue !== '' && !(defaultValue in hashTable) ) {
+
+        if ( maxOptions ) {
+            error = 'Default value could not be added to the list. Delete an entry.'
+        } else {
+            console.log('adding default val')
+            optionsClone.push({ value: defaultValue});
+            console.log(optionsClone)
+        }
+
+    }
+
+    if (error) {
+        this.setState({
+          submitError: error,
+          submitSuccess: success
+        });
+    } else {
+        this.postForm(optionsClone);
+    }
 
   }
 
+  async postForm(options) {
+    const { label, type, required, defaultValue, order} = this.state;
+    let body = {
+      label,
+      type,
+      required,
+      defaultValue, 
+      order,
+      options
+    };
+
+    console.log('POST BODY:', body);
+
+    this.setState({
+      submitError: null,
+      savingForm: true,
+    }, async () => {
+        API.post('http://www.mocky.io/v2/566061f21200008e3aabd919', { body }).then( (res) => {
+            this.handleSuccessResponse(res);
+        }).catch(err => {
+            this.handleErrorResponse(err);
+        });  
+    });
+  }
+
+  handleSuccessResponse(res) {
+    this.setState({
+      savingForm: false,
+      submitSuccess: res, 
+      submitError: null
+    });
+  }
+
+  handleErrorResponse(res) {
+    console.log(res)
+    this.setState({
+      savingForm: false,
+      submitSuccess: null, 
+      submitError: 'Server error. Could not save.'
+    });
+  }
+
   renderOptions() {
-    const { options } = this.state;
+    const { options, defaultValue } = this.state;
 
     // Boolean used to show the delete icon. 
     let showDelete = false; 
@@ -167,13 +265,15 @@ export default class Question extends Component {
               
               {showDelete && <img alt='delete' src={Trash} className='question__body-options-row-delete' onClick={ () => this.deleteOption(idx) }/>}
             </div>
-            <div className='question__error-duplicate'>
+            { options[idx].duplicate && <div className='question__error-duplicate'>
               Duplicate entry.
-            </div>
+            </div>}
           </div>
           )
         ) }
         <div className='question__body-options-footer'>
+          <input type='text' placeholder='Default value' className='question__body-options-footer-default'
+            value={defaultValue} onChange={ (evt) => this.setState({ defaultValue: evt.target.value }) }/>
           <div className='question__body-options-footer-text'>Display Order</div>
             <Select
                 className='question__body-options-footer-dropdown'
@@ -197,7 +297,8 @@ export default class Question extends Component {
   }
 
   render() {
-    const { label, type, maxOptions, required, savingForm } = this.state;
+    const { label, type, maxOptions, required, savingForm, 
+              submitSuccess, submitError } = this.state;
     const maxOptionsClassname = classNames('question__error-max-capacity', { 'question__error-max-capacity-show': maxOptions });
 
     return (
@@ -235,6 +336,10 @@ export default class Question extends Component {
               />
             </div>
             <div className='question__body-submit-buttons'>
+
+              {submitSuccess && <div className='question__body-submit-success'>Successfully saved!</div>}
+              {submitError && <div className='question__error-submit'>{submitError}</div>}
+
               <Button text='Cancel' cb={this.resetForm}/>
               <Button text='Save changes' cb={this.trySavingForm} color='green' loading={savingForm}/>
             </div>

@@ -95,6 +95,17 @@
 			display: flex;
 			justify-content: flex-end;
 			align-items: center;
+
+			&-default {
+				font-size: 15px;
+			    border: 0;
+			    outline: none;
+			    border-bottom: 1px solid #ccc;
+			    padding-bottom: 7px;
+			    flex: 1;
+			    margin-right: 20px;
+			}
+
 			&-text {
 				margin-right: 15px;
 				font-weight: 300;
@@ -122,9 +133,16 @@
 			&-buttons {
 				display: flex;
 				justify-content: flex-end;
+				align-items: center;
 				.button {
 					margin-left: 15px;
 				}
+				.button__loading {
+					margin-left: 15px;
+				}
+			}
+			&-success {
+				color: green;
 			}
 		}
 
@@ -136,9 +154,11 @@
 
 	&__error {
 		&-max-capacity {
-			color: #e46363;
+			color: #e29b17;
 			opacity: 0;
 			transition: opacity ease-in-out 1s;
+			padding-top: 20px;
+		    padding-bottom: 10px;
 			&-show {
 				opacity: 1;
 			}
@@ -147,6 +167,10 @@
 			color: #e46363;
 		    padding-top: 5px;
 		    padding-left: 30px;
+		}
+		&-submit {
+			font-size: 15px;
+			color: #e46363;
 		}
 	}
 }

@@ -15,7 +15,6 @@ export default class Button extends Component {
 
 	render() {
 		const { loading, cb, text, color } = this.props;
-		console.log(color)
     const buttonClasses = classNames({ 'button__green': color === 'green' },
     																 { 'button__white': color === 'white' },
     																 { 'button': !loading }, 
