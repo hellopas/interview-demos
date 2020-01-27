@@ -4,11 +4,9 @@ import Select from 'react-select';
 import _ from 'lodash';
 import classNames from 'classnames';
 
-/* Import styles */
-import './Checkboxes.scss';
-
-/* Import my components */
-
+/* Import styles and resources */
+import './Options.scss';
+import Trash from './img/bin.png';
 
 // Types of forms available for the form builder.
 const orderOptions = [
@@ -49,30 +47,30 @@ export default class Options extends Component {
     }
 
     return (
-      <div>
+      <div className='options'>
         { _.map(options, (option, idx) => (
-          <div className='fieldbuilder__body-options-parent' key={`option-${idx}`}>
-            <div className='fieldbuilder__body-options-row'>
-              <div className='fieldbuilder__body-options-row-checkbox'></div>
+          <div className='options__body-options-parent' key={`option-${idx}`}>
+            <div className='options__body-options-row'>
+              <div className='options__body-options-row-checkbox'></div>
               
-              <input className='fieldbuilder__body-options-row-input' placeholder='Add option' onChange={ (evt) => { this.props.updateOption(evt.target.value, idx) } }
+              <input className='options__body-options-row-input' placeholder='Add option' onChange={ (evt) => { this.props.updateOption(evt.target.value, idx) } }
                 value={options[idx].value} onFocus={ () => this.props.createNewOption(idx)} ref={ (ref) => this.fields[idx] = ref } onKeyPress={ (evt) => this.handleEnterKeyPress(evt, idx) }/>
               
-              {showDelete && <img alt='delete' src={Trash} className='fieldbuilder__body-options-row-delete' onClick={ () => this.props.deleteOption(idx) }/>}
+              {showDelete && <img alt='delete' src={Trash} className='options__body-options-row-delete' onClick={ () => this.props.deleteOption(idx) }/>}
             </div>
-            { options[idx].duplicate && <div className='fieldbuilder__error-duplicate'>
+            { options[idx].duplicate && <div className='options__error-duplicate'>
               Duplicate entry.
             </div>}
           </div>
           )
         ) }
-        <div className='fieldbuilder__body-options-footer'>
-          <input type='text' placeholder='Default value' className='fieldbuilder__body-options-footer-default'
+        <div className='options__body-options-footer'>
+          <input type='text' placeholder='Default value' className='options__body-options-footer-default'
             value={defaultValue} onChange={ (evt) => this.props.handleDefaultValue(evt.target.value) }/>
-          <div className='fieldbuilder__body-options-footer-text'>Display Order</div>
+          <div className='options__body-options-footer-text'>Display Order</div>
             <Select
-                className='fieldbuilder__body-options-footer-dropdown'
-                classNamePrefix='fieldbuilder__body-options-footer-dropdown'
+                className='options__body-options-footer-dropdown'
+                classNamePrefix='options__body-options-footer-dropdown'
                 value={order}
                 onChange={this.props.handleOrderChange}
                 options={orderOptions}

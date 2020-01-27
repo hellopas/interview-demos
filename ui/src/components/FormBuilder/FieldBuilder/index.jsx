@@ -8,21 +8,15 @@ import styled from "styled-components";
 
 /* Import styles and resources */
 import './FieldBuilder.scss';
-import Trash from './img/bin.png';
 
 /* Import my components */
+import Options from './Options';
 import Button from 'components/Button';
 import API from 'services/API';
 
 // Types of forms available for the form builder.
 const typeOptions = [
   { value: 'Multi-select', label: 'Multi-select' },
-];
-
-// Types of forms available for the form builder.
-const orderOptions = [
-  { value: 'A-z', label: '(A-z) - Alphabetical' },
-  { value: 'z-A', label: '(z-A) Alphabetical' },
 ];
 
 // Max number of options allowed.
@@ -43,22 +37,34 @@ export default class FieldBuilder extends Component {
     this.handleOrderChange = this.handleOrderChange.bind(this);
 
     // Renders the options for type: multi-select 
-    this.renderOptions = this.renderOptions.bind(this);
+    // this.renderOptions = this.renderOptions.bind(this);
+
+    // Adds a new option row
+    this.createNewOption = this.createNewOption.bind(this);
 
     // Removes an existing option
     this.deleteOption = this.deleteOption.bind(this);
+
+    // Updates a row option
+    this.updateOption = this.updateOption.bind(this);
 
     // Handles when Enter is pressed while in an options input
     this.handleEnterKeyPress = this.handleEnterKeyPress.bind(this);
 
     // Sets default value
     this.handleDefaultValue = this.handleDefaultValue.bind(this);
-    
+
     // Resets the form
     this.resetForm = this.resetForm.bind(this);
 
     // Starts the process of saving form
-    this.trySavingForm = this.trySavingForm.bind(this);
+    this.getFormReadyToSave = this.getFormReadyToSave.bind(this);
+
+    // Remove all blank option rows
+    this.eliminateBlankOptions = this.eliminateBlankOptions.bind(this);
+
+    // Save form if valid, otherwise show error
+    this.validateAndTrySavingForm = this.validateAndTrySavingForm.bind(this);
 
     this.state = {
       label: '',
@@ -155,15 +161,45 @@ export default class FieldBuilder extends Component {
     });
   }
 
-  trySavingForm() {
+  getFormReadyToSave() {
+    // Returns all the non blank options
+    let newOptions = this.eliminateBlankOptions();
+
+    this.setState({
+      options: newOptions
+    }, () => {
+      this.validateAndTrySavingForm();
+    });
+  }
+
+  // Gets rid of all the blank options (unless there's just one option).
+  eliminateBlankOptions() {
+    const { options } = this.state;
+    let newOptions = []; // copy all non blank values to this array
+
+    for (let i = 0; i < options.length; i++ ) {
+      let value = options[i].value;
+      if ( value !== '') {
+          newOptions.push({ value: value });
+      }
+    }
+
+    if (newOptions.length === 0 ) {
+        // Always keep one row
+        newOptions.push({ value: '' });
+    }
+
+    return newOptions;
+  }
+
+  validateAndTrySavingForm() {
     const { options, label, defaultValue, maxOptions } = this.state;
-    let optionsClone = _.cloneDeep(options);
+    let optionsClone = _.cloneDeep(options); // Need to manipulate options without changing state
 
     let hashTable = {};
     let duplicates = false;
     let error = null;
     let success = null;
-
 
     for (let i = 0; i < optionsClone.length; i++) {
       let option = optionsClone[i];
@@ -175,31 +211,21 @@ export default class FieldBuilder extends Component {
       }
     }
 
-    if ( duplicates ) {
+    if ( label === '') {
+        error = 'Label is empty.'
+    } else if ( optionsClone[0].value === '' ) {
+        error = 'Please enter an option.';
+    } else if ( duplicates ) {
         this.setState({
           options: optionsClone
         });
         error = 'Form contains duplicates entries.';
-    } else if ( label === '') {
-        error = 'Label is empty.'
-    }
-
-    if ( optionsClone[optionsClone.length - 1].value === '' ) {
-        // Since the form creates a new row when you focus on the "last" row, 
-        // this makes sure to ignore that row if it's empty before sending the data to the server.
-        optionsClone.pop();
-    }
-
-    if ( defaultValue !== '' && !(defaultValue in hashTable) ) {
-
+    } else if ( defaultValue !== '' && !(defaultValue in hashTable) ) {
         if ( maxOptions ) {
             error = 'Default value could not be added to the list. Delete an entry.'
         } else {
-            console.log('adding default val')
             optionsClone.push({ value: defaultValue});
-            console.log(optionsClone)
         }
-
     }
 
     if (error) {
@@ -210,7 +236,6 @@ export default class FieldBuilder extends Component {
     } else {
         this.postForm(optionsClone);
     }
-
   }
 
   async postForm(options) {
@@ -255,51 +280,6 @@ export default class FieldBuilder extends Component {
     });
   }
 
-  renderOptions() {
-    const { options, defaultValue, order } = this.state;
-
-    // Boolean used to show the delete icon. 
-    let showDelete = false; 
-
-    // Only show delete icon if there is more than 1 item because there's a 1 option minimum for it to be a question.
-    if (options.length > 1) {
-        showDelete = true;
-    }
-
-    return (
-      <div>
-        { _.map(options, (option, idx) => (
-          <div className='fieldbuilder__body-options-parent' key={`option-${idx}`}>
-            <div className='fieldbuilder__body-options-row'>
-              <div className='fieldbuilder__body-options-row-checkbox'></div>
-              
-              <input className='fieldbuilder__body-options-row-input' placeholder='Add option' onChange={ (evt) => { this.updateOption(evt.target.value, idx) } }
-                value={options[idx].value} onFocus={ () => this.createNewOption(idx)} ref={ (ref) => this.fields[idx] = ref } onKeyPress={ (evt) => this.handleEnterKeyPress(evt, idx) }/>
-              
-              {showDelete && <img alt='delete' src={Trash} className='fieldbuilder__body-options-row-delete' onClick={ () => this.deleteOption(idx) }/>}
-            </div>
-            { options[idx].duplicate && <div className='fieldbuilder__error-duplicate'>
-              Duplicate entry.
-            </div>}
-          </div>
-          )
-        ) }
-        <div className='fieldbuilder__body-options-footer'>
-          <input type='text' placeholder='Default value' className='fieldbuilder__body-options-footer-default'
-            value={defaultValue} onChange={ (evt) => this.setState({ defaultValue: evt.target.value }) }/>
-          <div className='fieldbuilder__body-options-footer-text'>Display Order</div>
-            <Select
-                className='fieldbuilder__body-options-footer-dropdown'
-                classNamePrefix='fieldbuilder__body-options-footer-dropdown'
-                value={order}
-                onChange={this.handleOrderChange}
-                options={orderOptions}
-              />
-        </div>
-      </div>
-    );
-  }
-
   handleEnterKeyPress(evt, idx) {
     // Focus on the next input if available when Enter is pressed
     if (evt.key === 'Enter') {
@@ -310,7 +290,7 @@ export default class FieldBuilder extends Component {
   }
 
   render() {
-    const { label, type, maxOptions, required, savingForm, 
+    const { options, label, order, defaultValue, type, maxOptions, required, savingForm, 
               submitSuccess, submitError } = this.state;
     const maxOptionsClassname = classNames('fieldbuilder__error-max-capacity', { 'fieldbuilder__error-max-capacity-show': maxOptions });
 
@@ -335,7 +315,9 @@ export default class FieldBuilder extends Component {
           </div>
 
           <div className='fieldbuilder__body-options'>
-            {this.renderOptions()}  
+            <Options options={options} defaultValue={defaultValue} order={order} updateOption={this.updateOption} 
+              createNewOption={this.createNewOption} deleteOption={this.deleteOption} handleDefaultValue={this.handleDefaultValue} />  
+
             <div className={maxOptionsClassname}>{`You have reached your max limit of ${MAX_OPTIONS_ALLOWED} options.`}</div>
           </div>
 
@@ -354,7 +336,7 @@ export default class FieldBuilder extends Component {
               {submitError && <div className='fieldbuilder__error-submit'>{submitError}</div>}
 
               <Button text='Cancel' cb={this.resetForm}/>
-              <Button text='Save changes' cb={this.trySavingForm} color='green' loading={savingForm}/>
+              <Button text='Save changes' cb={this.getFormReadyToSave} color='green' loading={savingForm}/>
             </div>
           </div>
 
