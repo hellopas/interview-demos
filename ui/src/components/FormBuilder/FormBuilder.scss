@@ -1,0 +1,45 @@
+.formbuilder {
+	display: flex;
+	flex-direction: column;
+	max-width: 750px;	
+	width: 100%;
+
+	&__title {
+		display: flex;
+		flex-direction: column;
+		border: 2px solid #eaeaea;
+		border-radius: 10px 10px 0 0;
+
+
+		&-header {
+			background-color: #eaeaea;
+    		padding: 10px;
+    		border-radius: 8px 8px 0 0;
+		}
+
+		&-input {
+			padding: 10px;
+
+			input {
+				font-size: 25px;
+			    border: 0;
+			    width: 100%;
+			    outline: none;
+			    border-bottom: 1px solid #ccc;
+			    padding-bottom: 7px;
+			}
+
+			input:focus {
+				border-bottom: 1px solid #66b1ff;
+			}
+		}
+	}
+
+	&__description-input input {
+		font-size: 15px;
+	}
+
+	&__questions {
+		margin-top: 20px;
+	}
+}

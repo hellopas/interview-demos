@@ -1,0 +1,55 @@
+.button {
+   	display: flex;
+	justify-content: center;
+	padding: 12px 19px;
+    border-radius: 5px;
+    line-height: 1;
+    width: 100px;
+    cursor: pointer;	
+    
+	&__green {
+		background-color: #5BB85B;
+		border: 1px solid #5BB85B;
+		color: white;
+	}
+
+	&__green:hover {
+		filter: brightness(1.05);
+	}
+
+	&__white {
+		border: 1px solid #cccccc;
+		color: black;
+	}
+
+	&__white:hover {
+		border: 1px solid #cccccc;
+		background-color: #f3f3f3;
+		color: black;
+	}
+}
+
+.button:active {
+	position: relative;
+	top: 1px;
+}
+
+.button__loading {
+	display: flex;
+	justify-content: center;
+	padding: 12px 19px;
+	border-radius: 5px;
+    line-height: 1;
+    width: 100px;
+    cursor: not-allowed;
+
+	img {
+		width: 16px;
+		animation: spin 4s linear infinite;
+	}
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
