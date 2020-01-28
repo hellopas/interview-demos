@@ -12,14 +12,8 @@ import './FieldBuilder.scss';
 import Options from './Options';
 import Button from 'components/Button';
 import API from 'services/API';
+import * as Constants from 'constants/index';
 
-// Types of forms available for the form builder.
-const typeOptions = [
-  { value: 'Multi-select', label: 'Multi-select' },
-];
-
-// Max number of options allowed.
-const MAX_OPTIONS_ALLOWED = 50;
 
 export default class FieldBuilder extends Component {
 
@@ -28,7 +22,7 @@ export default class FieldBuilder extends Component {
     type: { value: "Multi-select", label: "Multi-select" }, // Default type of form
     required: true,
     defaultValue: '',
-    order:  { value: 'A-z', label: '(A-z) - Alphabetical' }, // Default ordering
+    order:  { value: 'A-Z', label: '(A-Z) - Alphabetical' }, // Default ordering
     options: [{
       value: ''
     }],
@@ -38,21 +32,45 @@ export default class FieldBuilder extends Component {
     submitError: null
   }
 
+  /**
+   * Handles "field type" drop down change and sets state.
+   *
+   * @param {Object} selectedOption.
+   */
   handleTypeChange = (selectedOption) => {
     this.setState({ type: selectedOption });
   }
 
+  /**
+   * Handles "display order" drop down change and sets state.
+   *
+   * @param {Object}   selectedOption
+   */
   handleOrderChange = (selectedOption) => {
     this.setState({ order: selectedOption });
   }
 
+  /**
+   * Handles "default value" text input and sets state.
+   *
+   * @param {String}   defaultValue
+   */
+  handleDefaultValue = (defaultValue) => {
+    this.setState({ defaultValue });
+  }
+
+  /**
+   * Creates a new option row in the form.
+   *
+   * @param {Int}   idx  The last index in the options array.
+   */
   createNewOption = (idx) => {
     const { options } = this.state;
 
     // Check to see if the user is focused on the last options field.
     if ( idx + 1 === options.length ) {
         // Add an option field if MAX_OPTIONS_ALLOWED hasn't exceeded.
-        if ( options.length < MAX_OPTIONS_ALLOWED ) {
+        if ( options.length < Constants.MAX_OPTIONS_ALLOWED ) {
             this.setState({
               options: [...options, { value: '' }], 
               maxOptions: false
@@ -64,6 +82,11 @@ export default class FieldBuilder extends Component {
     }
   }
 
+  /**
+   * Deletes a selected option row in the form.
+   *
+   * @param {Int}   idx  An index in the options array.
+   */
   deleteOption = (idx) => {
     this.setState((state) => {
       // Creates new options array without the option being deleted.
@@ -76,6 +99,12 @@ export default class FieldBuilder extends Component {
     });
   }
 
+  /**
+   * Updates a selected option row in the form.
+   *
+   * @param {String}   value  The new option value.
+   * @param {Int}      idx    An index in the options array.
+   */
   updateOption = (value, idx) => {
     this.setState((state) => {
       // Creates new options array with all the old options and the option being updated.
@@ -94,12 +123,10 @@ export default class FieldBuilder extends Component {
     });
   }
 
-  handleDefaultValue = (defaultValue) => {
-    this.setState({
-      defaultValue
-    });
-  }
 
+  /**
+   * Clears form and sets state to original values.
+   */
   resetForm = () => {
     this.setState({
       label: '',
@@ -117,8 +144,12 @@ export default class FieldBuilder extends Component {
     });
   }
 
+  /**
+   * Starts the process of cleaning and checking the form 
+   * for completion and validation.
+   */
   getFormReadyToSave = () => {
-    // Returns all the non blank options
+    // Returns all the non blank options. No blank options allowed in form submission.
     let newOptions = this.eliminateBlankOptions();
 
     this.setState({
@@ -128,7 +159,9 @@ export default class FieldBuilder extends Component {
     });
   }
 
-  // Gets rid of all the blank options (unless there's just one option).
+  /**
+   * Gets rid of all the blank options (unless there's just one option).
+   */
   eliminateBlankOptions = () => {
     const { options } = this.state;
     let newOptions = []; // copy all non blank values to this array
@@ -148,6 +181,9 @@ export default class FieldBuilder extends Component {
     return newOptions;
   }
 
+  /**
+   * Checks the form for completion before submitting.
+   */
   validateAndTrySavingForm = () => {
     const { options, label, defaultValue, maxOptions } = this.state;
     let optionsClone = _.cloneDeep(options); // Need to manipulate options without changing state
@@ -194,6 +230,12 @@ export default class FieldBuilder extends Component {
     }
   }
 
+  /**
+   * POSTS the form, sets loading status, for Save button 
+   * and gets the result from the server.
+   *
+   * @param {Object}   options  All the options, no blanks and no duplicates.
+   */
   postForm = async (options) => {
     const { label, type, required, defaultValue, order} = this.state;
     let body = {
@@ -212,13 +254,22 @@ export default class FieldBuilder extends Component {
       savingForm: true,
     }, async () => {
         API.post('http://www.mocky.io/v2/566061f21200008e3aabd919', { body }).then( (res) => {
-            this.handleSuccessResponse(res);
+          if ( res.status === 'success') {
+              this.handleSuccessResponse(res);
+          } else {
+              this.handleErrorResponse(res);
+          }
         }).catch(err => {
             this.handleErrorResponse(err);
         });  
     });
   }
 
+  /**
+   * Sets state to show success message and stop loading button state.
+   *
+   * @param {String}   res  Server response body.
+   */
   handleSuccessResponse = (res) => {
     this.setState({
       savingForm: false,
@@ -227,6 +278,11 @@ export default class FieldBuilder extends Component {
     });
   }
 
+  /**
+   * Sets state to show error message and stop loading button state.
+   *
+   * @param {String}   res  Server response body.
+   */
   handleErrorResponse = (res) => {
     console.log(res)
     this.setState({
@@ -257,7 +313,7 @@ export default class FieldBuilder extends Component {
                 classNamePrefix='fieldbuilder__body-header-select'
                 value={type}
                 onChange={this.handleTypeChange}
-                options={typeOptions}
+                options={Constants.TYPE_OPTIONS}
               />
           </div>
 
@@ -265,7 +321,7 @@ export default class FieldBuilder extends Component {
             <Options options={options} defaultValue={defaultValue} order={order} updateOption={this.updateOption} 
               createNewOption={this.createNewOption} deleteOption={this.deleteOption} handleDefaultValue={this.handleDefaultValue} />  
 
-            <div className={maxOptionsClassname}>{`You have reached your max limit of ${MAX_OPTIONS_ALLOWED} options.`}</div>
+            <div className={maxOptionsClassname}>{`You have reached your max limit of ${Constants.MAX_OPTIONS_ALLOWED} options.`}</div>
           </div>
 
           <div className='fieldbuilder__body-submit'>

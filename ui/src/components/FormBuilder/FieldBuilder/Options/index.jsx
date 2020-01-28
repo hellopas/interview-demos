@@ -7,16 +7,26 @@ import _ from 'lodash';
 import './Options.scss';
 import Trash from './img/bin.png';
 
-// Types of forms available for the form builder.
-const orderOptions = [
-  { value: 'A-z', label: '(A-z) - Alphabetical' },
-  { value: 'z-A', label: '(z-A) Alphabetical' },
-];
+/* Import my components */
+import * as Constants from 'constants/index';
+
 
 export default class Options extends Component {
 
+  /**
+   * Stores the refs for each input field. Used to focus on the next input when
+   * Enter is pressed.
+   */
   fields = {}; 
 
+
+  /**
+   * Handles the pressing of 'Enter' key from an option input field so it
+   * goes to the next row.
+   *
+   * @param {Object}   evt  The keyboard event.
+   * @param {Int}      idx  An index in the options array.
+   */
   handleEnterKeyPress = (evt, idx) => {
     // Focus on the next input if available when Enter is pressed
     if (evt.key === 'Enter') {
@@ -64,7 +74,7 @@ export default class Options extends Component {
                 classNamePrefix='options__body-options-footer-dropdown'
                 value={order}
                 onChange={this.props.handleOrderChange}
-                options={orderOptions}
+                options={Constants.ORDER_OPTIONS}
               />
         </div>
       </div>
