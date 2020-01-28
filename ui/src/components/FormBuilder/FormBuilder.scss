@@ -19,14 +19,16 @@
 
 		&-input {
 			padding: 10px;
-
+			display: flex;
 			input {
 				font-size: 25px;
 			    border: 0;
 			    width: 100%;
 			    outline: none;
 			    border-bottom: 1px solid #ccc;
+			    border-radius: 0;
 			    padding-bottom: 7px;
+			    background: none;
 			}
 
 			input:focus {

@@ -300,7 +300,7 @@ export default class FieldBuilder extends Component {
       submitError: null,
       savingForm: true,
     }, async () => {
-        API.post('http://www.mocky.io/v2/566061f21200008e3aabd919', { body }).then( (res) => {
+        API.post(Constants.MOCK_URL, { body }).then( (res) => {
           if ( res.status === 'success') {
               this.handleSuccessResponse(res);
           } else {
