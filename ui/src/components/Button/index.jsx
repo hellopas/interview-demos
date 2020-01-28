@@ -1,7 +1,7 @@
 /* Import 3rd party libraries */
 import React, { Component } from 'react'
 import classNames from 'classnames';
-import PropTypes from 'prop-types'; // ES6
+import PropTypes from 'prop-types';
 
 /* Import styles and resources */
 import './Button.scss';

@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import Select from 'react-select';
 import _ from 'lodash';
+import PropTypes from 'prop-types'; // ES6
 
 /* Import styles and resources */
 import './Options.scss';
@@ -81,3 +82,14 @@ export default class Options extends Component {
     );
   }
 }
+
+
+Options.propTypes = {
+  options: PropTypes.array.isRequired,
+  defaultValue: PropTypes.string.isRequired,
+  order: PropTypes.object.isRequired,
+  updateOption: PropTypes.func.isRequired,
+  createNewOption: PropTypes.func.isRequired,
+  deleteOption: PropTypes.func.isRequired,
+  handleDefaultValue: PropTypes.func.isRequired
+};

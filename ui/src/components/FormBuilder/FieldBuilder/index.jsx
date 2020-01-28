@@ -33,6 +33,43 @@ export default class FieldBuilder extends Component {
   }
 
   /**
+   * Checks to see if label, options, and default value are available in local
+   * storage. If so, sets state with those values. This is to prevent user from
+   * losing data in case of closing browser or accidentally leaving page.
+   */
+  componentDidMount() {
+
+    let label = localStorage.hasOwnProperty('label') 
+              ? localStorage.getItem('label') 
+              : '';
+
+    let defaultValue = localStorage.hasOwnProperty('defaultValue') 
+                     ? localStorage.getItem('defaultValue') 
+                     : '';
+    
+    let options = localStorage.hasOwnProperty('options') 
+                ? JSON.parse(localStorage.getItem('options')) 
+                : [{ value: '' }];
+
+    this.setState({
+      label,
+      defaultValue,
+      options: options
+    });
+  }
+
+  /**
+   * Handles "label" input field nd sets state.
+   *
+   * @param {String} value.
+   */
+  handleLabelChange = (value) => {
+    this.setState({ label: value });
+
+    localStorage.setItem('label', value);
+  }
+
+  /**
    * Handles "field type" drop down change and sets state.
    *
    * @param {Object} selectedOption.
@@ -57,6 +94,8 @@ export default class FieldBuilder extends Component {
    */
   handleDefaultValue = (defaultValue) => {
     this.setState({ defaultValue });
+
+    localStorage.setItem('defaultValue', defaultValue);
   }
 
   /**
@@ -80,6 +119,8 @@ export default class FieldBuilder extends Component {
             this.setState({ maxOptions: true });
         }
     }
+
+    localStorage.setItem('options', JSON.stringify(options));
   }
 
   /**
@@ -92,6 +133,8 @@ export default class FieldBuilder extends Component {
       // Creates new options array without the option being deleted.
       const options = state.options.filter((item, j) => idx !== j);
       
+      localStorage.setItem('options', JSON.stringify(options));
+
       return {
         options,
         maxOptions: false // If you ever delete an option, you will inevitably have less than the max amount since you can't go past the max amount.
@@ -142,6 +185,8 @@ export default class FieldBuilder extends Component {
       submitSuccess: null,
       submitError: null,
     });
+
+    this.clearLocalStorage();
   }
 
   /**
@@ -151,6 +196,8 @@ export default class FieldBuilder extends Component {
   getFormReadyToSave = () => {
     // Returns all the non blank options. No blank options allowed in form submission.
     let newOptions = this.eliminateBlankOptions();
+
+    localStorage.setItem('options', JSON.stringify(newOptions));
 
     this.setState({
       options: newOptions
@@ -276,6 +323,8 @@ export default class FieldBuilder extends Component {
       submitSuccess: res, 
       submitError: null
     });
+
+    this.clearLocalStorage();
   }
 
   /**
@@ -292,6 +341,15 @@ export default class FieldBuilder extends Component {
     });
   }
 
+  /**
+   * Removes all keys from local storage.
+   */
+  clearLocalStorage = () => {
+    localStorage.removeItem('label');
+    localStorage.removeItem('options');
+    localStorage.removeItem('defaultValue');
+  }
+
   render() {
     const { options, label, order, defaultValue, type, maxOptions, required, savingForm, 
               submitSuccess, submitError } = this.state;
@@ -306,7 +364,7 @@ export default class FieldBuilder extends Component {
         <div className='fieldbuilder__body'>
           <div className='fieldbuilder__body-header'> 
               <input type='text' placeholder='Label' className='fieldbuilder__body-header-input'
-                value={label} onChange={ (evt) => this.setState({ label: evt.target.value }) }/>
+                value={label} onChange={ (evt) => this.handleLabelChange(evt.target.value) }/>
 
               <Select
                 className='fieldbuilder__body-header-select'
