@@ -33,7 +33,7 @@ export default class FieldBuilder extends Component {
   }
 
   /**
-   * Checks to see if label, options, and default value are available in local
+   * Checks to see if label, options, and default values are available in local
    * storage. If so, sets state with those values. This is to prevent user from
    * losing data in case of closing browser or accidentally leaving page.
    */
@@ -59,7 +59,7 @@ export default class FieldBuilder extends Component {
   }
 
   /**
-   * Handles "label" input field nd sets state.
+   * Handles "label" input field and sets state.
    *
    * @param {String} value.
    */
@@ -348,6 +348,8 @@ export default class FieldBuilder extends Component {
     localStorage.removeItem('label');
     localStorage.removeItem('options');
     localStorage.removeItem('defaultValue');
+    localStorage.removeItem('title');
+    localStorage.removeItem('description');
   }
 
   render() {

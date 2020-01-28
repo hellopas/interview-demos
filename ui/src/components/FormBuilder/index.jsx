@@ -15,6 +15,49 @@ export default class FormBuilder extends Component {
     description: ''
   };
 
+  /**
+   * Checks to see if title and description values are available in local
+   * storage. If so, sets state with those values. This is to prevent user from
+   * losing data in case of closing browser or accidentally leaving page.
+   */
+  componentDidMount() {
+
+    let title = localStorage.hasOwnProperty('title') && localStorage.getItem('title') !== ''
+              ? localStorage.getItem('title') 
+              : 'Untitled form';
+
+    let description = localStorage.hasOwnProperty('description') 
+                     ? localStorage.getItem('description') 
+                     : '';
+
+    this.setState({
+      title,
+      description
+    });
+  }
+
+  /**
+   * Handles "label" input field and sets state.
+   *
+   * @param {String} value.
+   */
+  handleTitleChange = (value) => {
+    this.setState({ title: value });
+
+    localStorage.setItem('title', value);
+  }
+
+  /**
+   * Handles "description" input field and sets state.
+   *
+   * @param {String} value.
+   */
+  handleDescriptionChange = (value) => {
+    this.setState({ description: value });
+
+    localStorage.setItem('description', value);
+  }
+
   render() {
     const { title, description } = this.state;
 
@@ -28,11 +71,11 @@ export default class FormBuilder extends Component {
           <div className='formbuilder__title-header'></div>
           
           <div className='formbuilder__title-input'>
-            <input type='text' placeholder='Form title' value={title} onChange={ (evt) => {this.setState({ title: evt.target.value })} }/>
+            <input type='text' placeholder='Form title' value={title} onChange={ (evt) => this.handleTitleChange(evt.target.value) }/>
           </div>
 
           <div className='formbuilder__title-input formbuilder__description-input'>
-            <input type='text' placeholder='Form description' value={description} onChange={ (evt) => {this.setState({ description: evt.target.value })} }/>
+            <input type='text' placeholder='Form description' value={description} onChange={ (evt) => this.handleDescriptionChange(evt.target.value) }/>
           </div>
         </div>
 
