@@ -382,7 +382,7 @@ export default class FieldBuilder extends Component {
 
           <div className='fieldbuilder__body-options'>
             <Options options={options} defaultValue={defaultValue} order={order} updateOption={this.updateOption} 
-              createNewOption={this.createNewOption} deleteOption={this.deleteOption} handleDefaultValue={this.handleDefaultValue} />  
+              createNewOption={this.createNewOption} deleteOption={this.deleteOption} handleDefaultValue={this.handleDefaultValue} handleOrderChange={this.handleOrderChange} />  
 
             <div className={maxOptionsClassname}>{`You have reached your max limit of ${Constants.MAX_OPTIONS_ALLOWED} options.`}</div>
           </div>

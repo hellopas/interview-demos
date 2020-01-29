@@ -91,5 +91,6 @@ Options.propTypes = {
   updateOption: PropTypes.func.isRequired,
   createNewOption: PropTypes.func.isRequired,
   deleteOption: PropTypes.func.isRequired,
-  handleDefaultValue: PropTypes.func.isRequired
+  handleDefaultValue: PropTypes.func.isRequired,
+  handleOrderChange: PropTypes.func.isRequired
 };
