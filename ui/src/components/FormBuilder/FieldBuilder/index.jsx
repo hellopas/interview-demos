@@ -166,27 +166,30 @@ export default class FieldBuilder extends Component {
     });
   }
 
-
   /**
    * Clears form and sets state to original values.
    */
   resetForm = () => {
-    this.setState({
-      label: '',
-      type: { value: "Multi-select", label: "Multi-select" },
-      required: true,
-      defaultValue: '',
-      order:  { value: 'A-z', label: '(A-z) - Alphabetical' },
-      options: [{
-        value: ''
-      }],
-      maxOptions: false,
-      savingForm: false,
-      submitSuccess: null,
-      submitError: null,
-    });
+    const confirmDialog = window.confirm("Are you sure you want to clear the form?");
+    
+    if ( confirmDialog === true ) {  
+      this.setState({
+        label: '',
+        type: { value: "Multi-select", label: "Multi-select" },
+        required: true,
+        defaultValue: '',
+        order:  { value: 'A-z', label: '(A-z) - Alphabetical' },
+        options: [{
+          value: ''
+        }],
+        maxOptions: false,
+        savingForm: false,
+        submitSuccess: null,
+        submitError: null,
+      });
 
-    this.clearLocalStorage();
+      this.clearLocalStorage();
+    }
   }
 
   /**
